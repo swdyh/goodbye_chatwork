@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'fileutils'
+require 'goodbye_chatwork'
+
+opts = ARGV.getopts('i:p:e:x:d:h')
+email = opts['i']
+password = opts['p']
+
+if opts['h'] || !email || !password
+  puts <<-EOS
+Usage: goodbye_chatwork
+    -i your chatwork id
+    -p your chatwork password
+    -e room id (export chat logs)
+    -x room id (export chat logs and download attachment files)
+    -d dir
+
+Example:
+show room list
+
+    $ goodbye_chatwork -i example@example.com -p your_password
+
+export logs (-e: chat logs only)
+
+    $ goodbye_chatwork -i example@example.com -p your_password -e room_id
+
+export logs (-x: chat logs and attachment files)
+
+    $ goodbye_chatwork -i example@example.com -p your_password -x room_id
+  EOS
+  exit
+end
+
+gcw = GoobyeChatwork::Client.new(email, password, verbose: true)
+gcw.login
+list = gcw.room_list
+if opts['x'] || opts['e']
+  log_dir = opts['d'] || 'chatwork_logs'
+  unless File.exists?(log_dir)
+    gcw.info "mkdir #{log_dir}"
+    FileUtils.mkdir_p log_dir
+  end
+  room_id = opts['x'] || opts['e']
+  room = list.find { |i| i[0] == room_id.to_s }
+  unless room
+    puts 'no room'
+    exit 1
+  end
+  room_name = room[1].gsub(/[[:cntrl:]\s\/\:]/, '')
+  out = File.join(log_dir, "#{room_id}_#{room_name}.csv")
+  file_dir = File.join(log_dir, "#{room_id}_files_#{room_name}")
+  if opts['x']
+    gcw.export_csv(room_id, out, { include_file: true, dir: file_dir })
+  else
+    gcw.export_csv(room_id, out)
+  end
+else
+  puts list.map { |i| i.join(' ') }
+end
