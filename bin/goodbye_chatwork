@@ -33,7 +33,7 @@ export logs (-x: chat logs and attachment files)
   exit
 end
 
-gcw = GoobyeChatwork::Client.new(email, password, verbose: true)
+gcw = GoodbyeChatwork::Client.new(email, password, verbose: true)
 gcw.login
 list = gcw.room_list
 if opts['x'] || opts['e']
