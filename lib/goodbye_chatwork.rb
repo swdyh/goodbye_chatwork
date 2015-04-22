@@ -66,7 +66,7 @@ module GoodbyeChatwork
     end
 
     def old_chat room_id, first_chat_id = 0
-      self.info "get old caht #{first_chat_id}- ..."
+      self.info "get old chat #{first_chat_id}- ..."
       res = @client.get "https://www.chatwork.com/gateway.php?cmd=load_old_chat&myid=#{@myid}&_v=1.80a&_av=4&_t=#{@token}&ln=ja&room_id=#{room_id}&last_chat_id=0&first_chat_id=#{first_chat_id}&jump_to_chat_id=0&unread_num=0&file=1&desc=1"
       self.wait
       r = JSON.parse(res.body)
