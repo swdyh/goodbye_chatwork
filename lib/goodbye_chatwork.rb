@@ -27,8 +27,13 @@ module GoodbyeChatwork
     end
 
     def login
-      @client.post '/login.php', email: @id, password: @pw, autologin: 'on'
-      r = @client.get '/'
+      login_r = @client.post '/login.php', email: @id, password: @pw, autologin: 'on'
+      if login_r.env.status == 302
+	@client.url_prefix = URI.parse(login_r.env.response_headers[:location].match(/^https?(:\/\/[-_.!~*\'()a-zA-Z0-9;\:\@&=+\$,%#]+)/).to_s)
+        @client.get login_r.env.response_headers[:location]
+      end
+
+      r = @client.get "/"
       self.wait
       self.info "login as #{@id} ..."
       @token = r.body.match(/var ACCESS_TOKEN = '(.+)'/).to_a[1]
