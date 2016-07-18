@@ -4,7 +4,7 @@ This is Chatwork(chatwork.com) log exporter. This can be used also when you can 
 
 ## Installation
 
-    $ gem install goobye_chatwork
+    $ gem install goodbye_chatwork
 
 ## Usage
 
