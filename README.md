@@ -14,13 +14,21 @@ show chat room list (output: room_id room_name count)
     11111 chatroom1 24
     11112 chatroom1 42
 
-export logs (chat logs only: -e option)
+export specified room's chat logs (chat logs only: -e option)
 
     $ goodbye_chatwork -i example@example.com -p your_password -e room_id
 
-export logs (chat logs and attachment files: -x option)
+export specified room's chat logs (chat logs and attachment files: -x option)
 
     $ goodbye_chatwork -i example@example.com -p your_password -x room_id
+
+export all room's chat logs (chat logs only: -e option)
+
+    $ goodbye_chatwork -i example@example.com -p your_password -e all
+
+export all room's chat logs (chat logs and attachment files: -x option)
+
+    $ goodbye_chatwork -i example@example.com -p your_password -x all
 
 ## Information
 

@@ -13,8 +13,10 @@ if opts['h'] || !email || !password
 Usage: goodbye_chatwork
     -i your chatwork id
     -p your chatwork password
-    -e room id (export chat logs)
-    -x room id (export chat logs and download attachment files)
+    -e room id (export specified room's chat logs)
+    -x room id (export specified room's chat logs and download attachment files)
+    -e all (export all room's chat logs)
+    -x all (export all room's chat logs and download attachment files)
     -d dir
 
 Example:
@@ -22,13 +24,21 @@ show room list
 
     $ goodbye_chatwork -i example@example.com -p your_password
 
-export logs (-e: chat logs only)
+export specified room's chat logs (-e: chat logs only)
 
     $ goodbye_chatwork -i example@example.com -p your_password -e room_id
 
-export logs (-x: chat logs and attachment files)
+export specified room's chat logs (-x: chat logs and attachment files)
 
     $ goodbye_chatwork -i example@example.com -p your_password -x room_id
+
+export all room's chat logs (-e: chat logs only)
+
+    $ goodbye_chatwork -i example@example.com -p your_password -e all
+
+export all room's chat logs (-x: chat logs and attachment files)
+
+    $ goodbye_chatwork -i example@example.com -p your_password -x all
   EOS
   exit
 end
