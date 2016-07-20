@@ -61,7 +61,7 @@ if opts['x'] || opts['e']
               puts 'no room'
               exit 1
             end
-	          [room]
+            [room]
           end
   rooms.each do |room|
     room_id = room[0]
