@@ -53,18 +53,26 @@ if opts['x'] || opts['e']
     FileUtils.mkdir_p log_dir
   end
   room_id = opts['x'] || opts['e']
-  room = list.find { |i| i[0] == room_id.to_s }
-  unless room
-    puts 'no room'
-    exit 1
-  end
-  room_name = room[1].gsub(/[[:cntrl:]\s\/\:]/, '')
-  out = File.join(log_dir, "#{room_id}_#{room_name}.csv")
-  file_dir = File.join(log_dir, "#{room_id}_files_#{room_name}")
-  if opts['x']
-    gcw.export_csv(room_id, out, { include_file: true, dir: file_dir })
-  else
-    gcw.export_csv(room_id, out)
+  rooms = if room_id == "all"
+            list
+          else
+            room = list.find { |i| i[0] == room_id.to_s }
+            unless room
+              puts 'no room'
+              exit 1
+            end
+	          [room]
+          end
+  rooms.each do |room|
+    room_id = room[0]
+    room_name = room[1].gsub(/[[:cntrl:]\s\/\:]/, '')
+    out = File.join(log_dir, "#{room_id}_#{room_name}.csv")
+    file_dir = File.join(log_dir, "#{room_id}_files_#{room_name}")
+    if opts['x']
+      gcw.export_csv(room_id, out, { include_file: true, dir: file_dir })
+    else
+      gcw.export_csv(room_id, out)
+    end
   end
 else
   puts list.map { |i| i.join(' ') }
