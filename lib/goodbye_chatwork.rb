@@ -72,7 +72,21 @@ module GoodbyeChatwork
 
     def old_chat room_id, first_chat_id = 0
       self.info "get old chat #{first_chat_id}- ..."
-      res = @client.get "https://www.chatwork.com/gateway.php?cmd=load_old_chat&myid=#{@myid}&_v=1.80a&_av=4&_t=#{@token}&ln=ja&room_id=#{room_id}&last_chat_id=0&first_chat_id=#{first_chat_id}&jump_to_chat_id=0&unread_num=0&file=1&desc=1"
+      begin
+        res = @client.get do |req|
+          req.url "#{@client.url_prefix.to_s}gateway.php?cmd=load_old_chat&myid=#{@myid}&_v=1.80a&_av=4&_t=#{@token}&ln=ja&room_id=#{room_id}&last_chat_id=0&first_chat_id=#{first_chat_id}&jump_to_chat_id=0&unread_num=0&file=1&desc=1"
+          req.options.timeout = 5              # open/read timeout in seconds
+          req.options.open_timeout = 1000      # connection open timeout in seconds
+        end
+      rescue Faraday::ConnectionFailed => e
+        retry_count ||= 0
+        retry_count += 1
+        if retry_count < 5
+          retry
+        else
+          raise e
+        end
+      end
       self.wait
       r = JSON.parse(res.body)
       r['result']['chat_list'].sort_by { |i| - i['id'] }
@@ -105,7 +119,11 @@ module GoodbyeChatwork
 
     def file_info(file_id)
       self.info "get file info #{file_id} ..."
-      r = @client.get "https://www.chatwork.com/gateway.php?cmd=download_file&bin=1&file_id=#{file_id}"
+      r = @client.get do |req|
+        req.url "#{@client.url_prefix.to_s}gateway.php?cmd=download_file&bin=1&file_id=#{file_id}"
+        req.options.timeout = 5            # open/read timeout in seconds
+        req.options.open_timeout = 10      # connection open timeout in seconds
+      end
       self.wait
       b = r.headers['Content-disposition'].match(/filename="=\?UTF-8\?B\?(.+)\?="/).to_a[1]
       { url: r.headers['Location'], filename: b.unpack('m')[0] }
