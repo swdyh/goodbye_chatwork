@@ -114,7 +114,7 @@ module GoodbyeChatwork
         end
         out = File.join(opt[:dir], fn)
       end
-      open(out, 'w') { |f| f.write d }
+      open(out, 'wb') { |f| f.write d }
     end
 
     def file_info(file_id)
