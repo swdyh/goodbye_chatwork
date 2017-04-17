@@ -37,7 +37,7 @@ module GoodbyeChatwork
       self.wait
       self.info "login as #{@id} ..."
       @token = r.body.match(/var ACCESS_TOKEN *= *'(.+)'/).to_a[1]
-      @myid = r.body.match(/var myid *= *'(.+)'/).to_a[1]
+      @myid = r.body.match(/var MYID *= *'(.+)'/).to_a[1]
       raise 'no token' unless @token
       self.init_load
       self.get_account_info
