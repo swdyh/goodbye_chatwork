@@ -3,7 +3,5 @@ deployment:
     branch: master
     commands:
       - echo $RUGYGEMS_ORG_CREDENTIALS > ~/.gem/credentials; chmod 0600 ~/.gem/credentials
-      - git config user.name $RUBYGEMS_USERNAME
-      - git config user.email $RUBYGEMS_EMAIL
-      - bundle exec rake build
-      - bundle exec rake release
+      - bundle exec gem build goodbye_chatwork.gemspec | tee build.log
+      - "grep 'File: ' build.log | cut -d':' -f2 | xargs gem push -v"
