@@ -40,7 +40,6 @@ module GoodbyeChatwork
       @myid = r.body.match(/var MYID *= *'(.+)'/).to_a[1]
       raise 'no token' unless @token
       self.init_load
-      self.get_account_info
       self
     end
 
@@ -51,23 +50,6 @@ module GoodbyeChatwork
       d = JSON.parse(r.body)['result']
       @contacts = d['contact_dat']
       @rooms = d['room_dat']
-    end
-
-    def get_account_info
-      aids = @contacts.values.map { |i| i['aid'] }
-      mids = @rooms.values.map { |i| i['m'].keys }.flatten.uniq.map(&:to_i)
-      diff_ids = (mids - aids).sort
-      pdata = 'pdata=' + JSON.generate({ aid: diff_ids, get_private_data: 0 })
-      self.info 'load account info'
-      r = @client.post "/gateway.php?cmd=get_account_info&myid=#{@myid}&_v=1.80a&_av=4&_t=#{@token}&ln=ja", pdata
-      self.wait
-      begin
-        d = JSON.parse(r.body)['result']['account_dat']
-        @contacts.merge!(d)
-      rescue Exception => e
-        self.info e.to_s
-      end
-      self.wait
     end
 
     def old_chat room_id, first_chat_id = 0
