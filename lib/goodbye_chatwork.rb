@@ -40,41 +40,23 @@ module GoodbyeChatwork
       @myid = r.body.match(/var MYID *= *'(.+)'/).to_a[1]
       raise 'no token' unless @token
       self.init_load
-      self.get_account_info
       self
     end
 
     def init_load
       self.info "load initial data..."
-      r = @client.get "/gateway.php?cmd=init_load&myid=#{@myid}&_v=1.80a&_av=4&_t=#{@token}&ln=ja&rid=0&type=&new=1"
+      r = @client.get "/gateway.php?cmd=init_load&myid=#{@myid}&_v=1.80a&_av=5&_t=#{@token}&ln=ja&rid=0&type=&new=1"
       self.wait
       d = JSON.parse(r.body)['result']
       @contacts = d['contact_dat']
       @rooms = d['room_dat']
     end
 
-    def get_account_info
-      aids = @contacts.values.map { |i| i['aid'] }
-      mids = @rooms.values.map { |i| i['m'].keys }.flatten.uniq.map(&:to_i)
-      diff_ids = (mids - aids).sort
-      pdata = 'pdata=' + JSON.generate({ aid: diff_ids, get_private_data: 0 })
-      self.info 'load account info'
-      r = @client.post "/gateway.php?cmd=get_account_info&myid=#{@myid}&_v=1.80a&_av=4&_t=#{@token}&ln=ja", pdata
-      self.wait
-      begin
-        d = JSON.parse(r.body)['result']['account_dat']
-        @contacts.merge!(d)
-      rescue Exception => e
-        self.info e.to_s
-      end
-      self.wait
-    end
-
     def old_chat room_id, first_chat_id = 0
       self.info "get old chat #{first_chat_id}- ..."
       begin
         res = @client.get do |req|
-          req.url "#{@client.url_prefix.to_s}gateway.php?cmd=load_old_chat&myid=#{@myid}&_v=1.80a&_av=4&_t=#{@token}&ln=ja&room_id=#{room_id}&last_chat_id=0&first_chat_id=#{first_chat_id}&jump_to_chat_id=0&unread_num=0&file=1&desc=1"
+          req.url "#{@client.url_prefix.to_s}gateway.php?cmd=load_old_chat&myid=#{@myid}&_v=1.80a&_av=5&_t=#{@token}&ln=ja&room_id=#{room_id}&last_chat_id=0&first_chat_id=#{first_chat_id}&jump_to_chat_id=0&unread_num=0&file=1&desc=1"
           req.options.timeout = 5              # open/read timeout in seconds
           req.options.open_timeout = 1000      # connection open timeout in seconds
         end
