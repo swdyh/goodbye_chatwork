@@ -71,7 +71,7 @@ module GoodbyeChatwork
       end
       self.wait
       r = JSON.parse(res.body)
-      r['result']['chat_list'].sort_by { |i| i['id'] }.reverse
+      r['result']['chat_list'].sort_by { |i| i['id'].to_i }.reverse
     end
 
     def account(aid)
