@@ -8,9 +8,10 @@ This is Chatwork(chatwork.com) log exporter. This can be used also when you can 
 
 ## Usage
 
-show chat room list (output: room_id room_name count)
+show chat room list (output: room_id room_name count, organization_key: organization login url(optional))
 
     $ goodbye_chatwork -i example@example.com -p your_password
+    $ goodbye_chatwork -i example@example.com -p your_password -o organization_key(optional)
     11111 chatroom1 24
     11112 chatroom1 42
 

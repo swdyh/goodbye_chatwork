@@ -11,10 +11,11 @@ module GoodbyeChatwork
     REQUEST_INTERVAL = 1
     CHAT_SIZE = 40
 
-    def initialize(id, pw, opt = {})
+    def initialize(id, pw, org_key, opt = {})
       @verbose = opt[:verbose]
       @id = id
       @pw = pw
+      @org_key = org_key || ''
       @opt = opt
       @interval = opt[:inverval] || REQUEST_INTERVAL
       @base_url = opt[:base_url] || 'https://www.chatwork.com'
@@ -27,7 +28,7 @@ module GoodbyeChatwork
     end
 
     def login
-      login_r = @client.post '/login.php', email: @id, password: @pw, autologin: 'on'
+      login_r = @client.post '/login.php', email: @id, password: @pw, orgkey:@org_key, autologin: 'on'
       if login_r.env.status == 302
 	@client.url_prefix = URI.parse(login_r.env.response_headers[:location].match(/^https?(:\/\/[-_.!~*\'()a-zA-Z0-9;\:\@&=+\$,%#]+)/).to_s)
         @client.get login_r.env.response_headers[:location]
