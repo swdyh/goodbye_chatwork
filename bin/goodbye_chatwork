@@ -4,15 +4,17 @@ require 'optparse'
 require 'fileutils'
 require 'goodbye_chatwork'
 
-opts = ARGV.getopts('i:p:e:x:d:h')
+opts = ARGV.getopts('i:p:o:e:x:d:h')
 email = opts['i']
 password = opts['p']
+org_key = opts['o']
 
 if opts['h'] || !email || !password
   puts <<-EOS
 Usage: goodbye_chatwork
     -i your chatwork id
     -p your chatwork password
+    -o your organization login url key
     -e room id (export specified room's chat logs)
     -x room id (export specified room's chat logs and download attachment files)
     -e all (export all room's chat logs)
@@ -23,6 +25,7 @@ Example:
 show room list
 
     $ goodbye_chatwork -i example@example.com -p your_password
+    $ goodbye_chatwork -i example@example.com -p your_password -o organization_key(optional)
 
 export specified room's chat logs (-e: chat logs only)
 
@@ -43,7 +46,7 @@ export all room's chat logs (-x: chat logs and attachment files)
   exit
 end
 
-gcw = GoodbyeChatwork::Client.new(email, password, verbose: true)
+gcw = GoodbyeChatwork::Client.new(email, password, org_key, verbose: true)
 gcw.login
 list = gcw.room_list
 if opts['x'] || opts['e']
